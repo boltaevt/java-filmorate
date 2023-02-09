@@ -17,54 +17,37 @@ import java.util.Map;
 public class FilmController {
 
     private Map<Integer, Film> films = new HashMap<>();
-
     private int generatorId = 1;
 
     @GetMapping
     public List<Film> findAll() {
-
-        List<Film> filmsList = new ArrayList<>();
-        for (Film film : films.values()) {
-            filmsList.add(film);
-        }
-
-        return filmsList;
+        return (List<Film>) films.values();
     }
 
     @PostMapping
     public Film create(@RequestBody @Valid Film film) throws ValidationException {
-
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("дата релиза — не раньше 28 декабря 1895 года.");
         }
-
-        Film filmNew = new Film(generatorId, film.getName(), film.getDescription(),
-                film.getReleaseDate(), film.getDuration());
+        Film filmNew = new Film(generatorId, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration());
         films.put(generatorId, filmNew);
         generatorId++;
         return filmNew;
-
     }
 
     @PutMapping
     public Film updateFilmInfo(@RequestBody @Valid Film film) throws ValidationException {
-
         if (!films.containsKey(film.getId())) {
-            throw new ValidationException("Такого фильма сейчас нет. Сначала необходимо создать.");
+            throw new ValidationException("Фильма с идентификатором " + film.getId() + " нет. Необходимо создать.");
         }
-
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("дата релиза — не раньше 28 декабря 1895 года.");
         }
-
         films.remove(film.getId());
-        Film filmUpdated = new Film(film.getId(), film.getName(), film.getDescription(),
-                film.getReleaseDate(), film.getDuration());
+        Film filmUpdated = new Film(film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration());
         films.put(film.getId(), filmUpdated);
         return filmUpdated;
-
     }
-
 }
 
 

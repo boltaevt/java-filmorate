@@ -16,7 +16,6 @@ import java.util.Objects;
 public class Film {
 
     protected final int id;
-
     @NotBlank(message = "Название не может состоять из пробелов.")
     protected String name;
     @Size(max = 200, message = "максимальная длина описания — 200 символов")
@@ -25,7 +24,6 @@ public class Film {
     protected LocalDate releaseDate;
     @Positive
     protected int duration;
-
 
     public Film(int id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;

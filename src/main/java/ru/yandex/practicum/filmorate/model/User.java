@@ -32,8 +32,6 @@ public class User {
         this.birthday = birthday;
     }
 
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
