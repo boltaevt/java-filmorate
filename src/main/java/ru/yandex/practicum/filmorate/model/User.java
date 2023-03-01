@@ -1,20 +1,19 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.*;
 
 @Data
 @Slf4j
 public class User {
 
-    protected int id;
+    protected long id;
     @NotBlank
     @Email(message = "Адрес электронной почты не соответствует формату: xxxxx@yyyy.hh.")
     protected String email;
@@ -23,8 +22,9 @@ public class User {
     protected String name;
     @Past(message = "Дата рождения не может быть в будущем.")
     protected LocalDate birthday;
+    protected Set<Long> friendsList = new HashSet<>();
 
-    public User(int id, String email, String login, String name, LocalDate birthday) {
+    public User(long id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
         this.email = email;
         this.login = login;
