@@ -52,14 +52,7 @@ public class UserService {
             }
         }
         return commonFriends;
-
     }
-
-//    public List<User> showCommonFriends(User user1, User user2) {
-//        List<Long> common = new ArrayList<>(List.copyOf(user1.getFriendIds()));
-//        common.retainAll(user2.getFriendIds());
-//        return userStorage.findAllByIdIn(common);
-//    }
 
     public List<User> findAll() {
         return userStorage.findAll();
