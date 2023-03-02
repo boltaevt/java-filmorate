@@ -5,10 +5,7 @@ import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -21,16 +18,12 @@ public class InMemoryUserStorage implements UserStorage {
         if (users.containsKey(id)) {
             return users.get(id);
         } else {
-            throw new ObjectNotFoundException("No such user.");
+            throw new ObjectNotFoundException("No user with ID: " + id);
         }
     }
 
     public List<User> findAll() {
-        List<User> usersList = new ArrayList<>();
-        for (User user : users.values()) {
-            usersList.add(user);
-        }
-        return usersList;
+        return new ArrayList<>(users.values());
     }
 
     public User create(User user) throws ValidationException {
@@ -62,5 +55,19 @@ public class InMemoryUserStorage implements UserStorage {
             users.put(user.getId(), userUpdated);
             return userUpdated;
         }
+    }
+
+    @Override
+    public List<User> findAllByIdIn(List<Long> userIds) {
+        List<User> listOfUsers = new ArrayList<>();
+        if (userIds.isEmpty()) {
+            throw new ObjectNotFoundException("The list of user id's is empty.");
+        }
+        for (User user : users.values()) {
+            if (userIds.contains(user.getId())) {
+                listOfUsers.add(user);
+            }
+        }
+        return listOfUsers;
     }
 }

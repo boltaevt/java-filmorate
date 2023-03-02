@@ -6,10 +6,8 @@ import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -22,49 +20,46 @@ public class UserService {
     }
 
     public void addFriend(long idUser, long idFriend) {
-        if (!userStorage.findAll().contains(userStorage.findUserById(idUser))) {
-            throw new ObjectNotFoundException("No such User.");
+        List<Long> userIds = userStorage.findAll().stream().map(User::getId).collect(Collectors.toList());
+        if (!userIds.contains(idUser)) {
+            throw new ObjectNotFoundException("User with id not found " + idUser);
         }
-        if (!userStorage.findAll().contains(userStorage.findUserById(idFriend))) {
-            throw new ObjectNotFoundException("No such User.");
+        if (!userIds.contains(idFriend)) {
+            throw new ObjectNotFoundException("User with id not found " + idFriend);
         }
-        userStorage.findUserById(idUser).getFriendsList().add(idFriend);
-        userStorage.findUserById(idFriend).getFriendsList().add(idUser);
+        userStorage.findUserById(idUser).getFriendIds().add(idFriend);
+        userStorage.findUserById(idFriend).getFriendIds().add(idUser);
     }
 
     public void removeFriend(long idUser, long idFriend) {
-        userStorage.findUserById(idUser).getFriendsList().remove(idFriend);
-        userStorage.findUserById(idFriend).getFriendsList().remove(idUser);
+        userStorage.findUserById(idUser).getFriendIds().remove(idFriend);
+        userStorage.findUserById(idFriend).getFriendIds().remove(idUser);
     }
 
     public List<User> getUserFriends(long idUser) {
-        List<User> listOfFriends = new ArrayList<>(); //TODO: first user has -1 in Set.
-        Set<Long> setOfFriends = new HashSet<>(userStorage.findUserById(idUser).getFriendsList());
-        for (Long id : setOfFriends) {
-            listOfFriends.add(userStorage.findUserById(id));
-        }
-        return listOfFriends;
+        Set<Long> setOfFriends = new HashSet<>(userStorage.findUserById(idUser).getFriendIds());
+        return new ArrayList<>(userStorage.findAllByIdIn(List.copyOf(setOfFriends)));
     }
 
     public List<User> getCommonFriends(long idUser, long idOther) {
+        List<Long> userFriends = new ArrayList<>(List.copyOf(userStorage.findUserById(idUser).getFriendIds()));
+        List<Long> otherFriends = new ArrayList<>(List.copyOf(userStorage.findUserById(idOther).getFriendIds()));
         List<User> commonFriends = new ArrayList<>();
-        for (Long id : userStorage.findUserById(idUser).getFriendsList()) {
-            if (userStorage.findUserById(idOther).getFriendsList().contains(id)) {
-                commonFriends.add(userStorage.findUserById(id));
+        userFriends.retainAll(otherFriends);
+        if (!userFriends.isEmpty()) {
+            for (User user : userStorage.findAllByIdIn(userFriends)) {
+                commonFriends.add(user);
             }
         }
         return commonFriends;
+
     }
 
-    public List<User> showCommonFriends(User user1, User user2) {
-        List<User> commonFriends = new ArrayList<>();
-        for (Long id : user1.getFriendsList()) {
-            if (user2.getFriendsList().contains(id)) {
-                commonFriends.add(userStorage.findUserById(id));
-            }
-        }
-        return commonFriends;
-    }
+//    public List<User> showCommonFriends(User user1, User user2) {
+//        List<Long> common = new ArrayList<>(List.copyOf(user1.getFriendIds()));
+//        common.retainAll(user2.getFriendIds());
+//        return userStorage.findAllByIdIn(common);
+//    }
 
     public List<User> findAll() {
         return userStorage.findAll();

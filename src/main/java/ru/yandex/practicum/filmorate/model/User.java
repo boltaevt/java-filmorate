@@ -22,7 +22,7 @@ public class User {
     protected String name;
     @Past(message = "Дата рождения не может быть в будущем.")
     protected LocalDate birthday;
-    protected Set<Long> friendsList = new HashSet<>();
+    protected Set<Long> friendIds = new HashSet<>();
 
     public User(long id, String email, String login, String name, LocalDate birthday) {
         this.id = id;

@@ -26,7 +26,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film findFilmById(@PathVariable(value = "id") long id) throws ObjectNotFoundException {
+    public Film findFilmById(@PathVariable long id) throws ObjectNotFoundException {
         return filmService.findFilmById(id);
     }
 
@@ -41,13 +41,13 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void likeFilm(@PathVariable("id") long filmId, @PathVariable("userId") long userId)
+    public void likeFilm(@PathVariable("id") long filmId, @PathVariable long userId)
             throws ObjectNotFoundException {
         filmService.addLikeToFilm(filmId, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void unlikeFilm(@PathVariable("id") long filmId, @PathVariable("userId") long userId)
+    public void unlikeFilm(@PathVariable("id") long filmId, @PathVariable long userId)
             throws ObjectNotFoundException {
         filmService.removeLikeFromFilm(filmId, userId);
     }
