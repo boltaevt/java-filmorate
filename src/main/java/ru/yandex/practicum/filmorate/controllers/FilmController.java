@@ -1,52 +1,63 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/films")
 public class FilmController {
+    FilmService filmService;
 
-    private Map<Integer, Film> films = new HashMap<>();
-    private int generatorId = 1;
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @GetMapping
     public List<Film> findAll() {
-        return new ArrayList<>(films.values());
+        return filmService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Film findFilmById(@PathVariable long id) throws ObjectNotFoundException {
+        return filmService.findFilmById(id);
     }
 
     @PostMapping
     public Film create(@RequestBody @Valid Film film) throws ValidationException {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("дата релиза — не раньше 28 декабря 1895 года.");
-        }
-        Film filmNew = new Film(generatorId, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration());
-        films.put(generatorId, filmNew);
-        generatorId++;
-        return filmNew;
+        return filmService.create(film);
     }
 
     @PutMapping
-    public Film updateFilmInfo(@RequestBody @Valid Film film) throws ValidationException {
-        if (!films.containsKey(film.getId())) {
-            throw new ValidationException("Фильма с идентификатором " + film.getId() + " нет. Необходимо создать.");
+    public Film updateFilmInfo(@RequestBody @Valid Film film) throws ValidationException, ObjectNotFoundException {
+        return filmService.updateFilmInfo(film);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public void likeFilm(@PathVariable("id") long filmId, @PathVariable long userId)
+            throws ObjectNotFoundException {
+        filmService.addLikeToFilm(filmId, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void unlikeFilm(@PathVariable("id") long filmId, @PathVariable long userId)
+            throws ObjectNotFoundException {
+        filmService.removeLikeFromFilm(filmId, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getMostLikedFilms(@RequestParam(required = false) Integer count) {
+        if (count == null || count == 0) {
+            count = 10;
         }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("дата релиза — не раньше 28 декабря 1895 года.");
-        }
-        films.remove(film.getId());
-        Film filmUpdated = new Film(film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration());
-        films.put(film.getId(), filmUpdated);
-        return filmUpdated;
+        return filmService.showTenMostPopularFilms(count);
     }
 }
 
