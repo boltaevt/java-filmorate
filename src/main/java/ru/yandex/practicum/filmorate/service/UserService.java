@@ -67,12 +67,7 @@ public class UserService {
     }
 
     public User findUserById(Long id) {
-        for (User user : userStorage.findAll()) {
-            if (user.getId() == id) {
-                return user;
-            }
-        }
-        throw new ObjectNotFoundException("There is no such user.");
+        return userStorage.findUserById(id);
     }
 }
 
