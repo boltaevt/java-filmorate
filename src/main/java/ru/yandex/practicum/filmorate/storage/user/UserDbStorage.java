@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
+
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.ResultSet;
@@ -17,11 +18,13 @@ import java.util.List;
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    private final FriendDbStorage friendDbStorage;
     Long userId = 1L;
 
     @Autowired
-    public UserDbStorage (JdbcTemplate jdbcTemplate) {
+    public UserDbStorage (JdbcTemplate jdbcTemplate, FriendDbStorage friendDbStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.friendDbStorage = friendDbStorage;
     }
 
     @Override
@@ -43,13 +46,12 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User findUserById(Long id) {
+
         String sqlQuery =
                 "SELECT id, email, login, name, birthday " +
                         "FROM UserTable " +
                         "WHERE id = ?;";
-        if (jdbcTemplate.query(sqlQuery, new UserRowMapper(), id)
-                .stream()
-                .findFirst().isPresent()) {
+        if (checkUserExists(id)) {
             return jdbcTemplate.query(sqlQuery, new UserRowMapper(), id)
                     .stream()
                     .findFirst().get();
@@ -59,8 +61,17 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
+    public boolean checkUserExists(long id) {
+        boolean checker = false;
+        String sqlQuery = "SELECT COUNT (*) FROM UserTable WHERE id = ?;";
+        Integer count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
+        checker = count > 0;
+        return checker;
+    }
+
+    @Override
     public List<User> findAll() {
-        String sqlQuery = "SELECT id, email, login, name, birthday FROM UserTable LIMIT 300";
+        String sqlQuery = "SELECT id, email, login, name, birthday FROM UserTable LIMIT 100";
         return jdbcTemplate.query(sqlQuery, new UserRowMapper());
     }
 
