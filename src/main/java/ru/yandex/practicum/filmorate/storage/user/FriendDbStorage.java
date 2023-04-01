@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class FriendDbStorage {
+public class FriendDbStorage implements FriendStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -32,7 +32,7 @@ public class FriendDbStorage {
     public boolean confirmUserHasFriends(long userId) {
         boolean checker;
         String sqlQuery = "SELECT COUNT (*) FROM Friendship WHERE userId = ?;";
-        Integer count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, userId);
+        int count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, userId);
         checker = count > 0;
         return checker;
     }
@@ -40,11 +40,9 @@ public class FriendDbStorage {
     public List<Long> findUserFriends(long userId) {
         if (confirmUserHasFriends(userId)) {
             String sqlQuery = "SELECT userFriendId FROM Friendship WHERE userId = ?";
-            List<Long> friends = jdbcTemplate.queryForList(sqlQuery, Long.class, userId);
-            return friends;
+            return jdbcTemplate.queryForList(sqlQuery, Long.class, userId);
         } else {
-            List<Long> anotherList = Collections.emptyList();
-            return anotherList;
+            return Collections.emptyList();
         }
     }
 

@@ -1,34 +1,28 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Objects;
+import java.util.List;
 import java.util.Set;
 
+import lombok.Data;
+
 @Data
-@Slf4j
 public class Film {
+    private long id;
+    private String name;
+    private String description;
+    private LocalDate releaseDate;
+    private long duration;
+    private Set<Long> likes = new HashSet<>();
+    private Mpa mpa;
+    private Set<Genre> genres;
 
-    protected final long id;
-    @NotBlank(message = "Название не может состоять из пробелов.")
-    protected String name;
-    @Size(max = 200, message = "максимальная длина описания — 200 символов")
-    protected String description;
-    @Past
-    protected LocalDate releaseDate;
-    @Positive
-    protected int duration;
-    protected Set<Long> filmLikesSet = new HashSet<>();
+    public Film() {
 
-    public Film(long id, String name, String description, LocalDate releaseDate, int duration) {
+    }
+
+    public Film(long id, String name, String description, LocalDate releaseDate, long duration) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -36,16 +30,15 @@ public class Film {
         this.duration = duration;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Film film = (Film) o;
-        return id == film.id;
+    public Film(long id, String name, String description, LocalDate releaseDate, long duration, Mpa mpa,
+                Set<Genre> genres) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.mpa = mpa;
+        this.genres = genres;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
