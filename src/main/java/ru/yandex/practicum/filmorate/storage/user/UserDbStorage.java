@@ -21,7 +21,7 @@ public class UserDbStorage implements UserStorage {
     Long userId = 1L;
 
     @Autowired
-    public UserDbStorage (JdbcTemplate jdbcTemplate) {
+    public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -31,12 +31,12 @@ public class UserDbStorage implements UserStorage {
 
         if (user.getName().isBlank()) {
             jdbcTemplate.update(sqlQuery, user.getEmail(), user.getLogin(), user.getLogin(), user.getBirthday());
-            User newUser = new User (userId, user.getEmail(), user.getLogin(), user.getLogin(), user.getBirthday());
+            User newUser = new User(userId, user.getEmail(), user.getLogin(), user.getLogin(), user.getBirthday());
             userId++;
             return newUser;
         } else {
             jdbcTemplate.update(sqlQuery, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
-            User newUser = new User (userId, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
+            User newUser = new User(userId, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
             userId++;
             return newUser;
         }
@@ -45,14 +45,9 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User findUserById(Long id) {
 
-        String sqlQuery =
-                "SELECT id, email, login, name, birthday " +
-                        "FROM UserTable " +
-                        "WHERE id = ?;";
+        String sqlQuery = "SELECT id, email, login, name, birthday " + "FROM UserTable " + "WHERE id = ?;";
         if (checkUserExists(id)) {
-            return jdbcTemplate.query(sqlQuery, new UserRowMapper(), id)
-                    .stream()
-                    .findFirst().get();
+            return jdbcTemplate.query(sqlQuery, new UserRowMapper(), id).stream().findFirst().get();
         } else {
             throw new ObjectNotFoundException("User does not exist. Id: " + id);
         }
@@ -79,9 +74,7 @@ public class UserDbStorage implements UserStorage {
     public User updateUserInfo(User user) {
         long id = user.getId();
         String sqlConfirmation = "SELECT * FROM UserTable WHERE id=?;";
-        if ((jdbcTemplate.query(sqlConfirmation, new UserRowMapper(), id)
-                .stream()
-                .findFirst().isPresent())) {
+        if ((jdbcTemplate.query(sqlConfirmation, new UserRowMapper(), id).stream().findFirst().isPresent())) {
             String sqlQuery = "UPDATE UserTable SET email=?, login=?, name=?, birthday=? WHERE id=?";
             jdbcTemplate.update(sqlQuery, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), id);
             return user;
@@ -102,13 +95,7 @@ public class UserDbStorage implements UserStorage {
     private class UserRowMapper implements RowMapper<User> {
         @Override
         public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new User(
-                    rs.getInt("id"),
-                    rs.getString("email"),
-                    rs.getString("login"),
-                    rs.getString("name"),
-                    rs.getDate("birthday").toLocalDate()
-            );
+            return new User(rs.getInt("id"), rs.getString("email"), rs.getString("login"), rs.getString("name"), rs.getDate("birthday").toLocalDate());
         }
     }
 }
