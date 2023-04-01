@@ -22,13 +22,9 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public Mpa getById(Long id) {
         String sqlCheckQuery = "SELECT COUNT (*) FROM MPA WHERE mpa = ?;";
-
         if (jdbcTemplate.queryForObject(sqlCheckQuery, Integer.class, id) > 0) {
-
-        String sqlQuery = "SELECT * FROM MPA WHERE mpa = ?";
-
-        return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToMpa, id);
-
+            String sqlQuery = "SELECT * FROM MPA WHERE mpa = ?";
+            return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToMpa, id);
         } else {
             throw new ObjectNotFoundException("Object not found");
         }
@@ -41,7 +37,7 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     @Override
-    public Mpa getFilmMpa (Long mpa) {
+    public Mpa getFilmMpa(Long mpa) {
         String sqlQuery = "SELECT * FROM MPA WHERE mpa = ?";
         return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToMpa, mpa);
     }
