@@ -6,8 +6,10 @@ import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.Interfaces.GenreStorage;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,13 +24,19 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Genre getById(Long id) {
-        String sqlCheck = "SELECT COUNT (*) FROM Genre WHERE id = ?;";
-        if (jdbcTemplate.queryForObject(sqlCheck, Integer.class, id) > 0) {
-            String sqlQuery = "SELECT * FROM Genre WHERE id = ?;";
-            return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToGenre, id);
-        } else {
-            throw new ObjectNotFoundException("Object not found");
+        List <Genre> genres = getAll();
+        boolean checker = false;
+        Genre returnGenre = new Genre();
+        for (Genre genre : genres) {
+            if (genre.getId() == id) {
+                checker = true;
+                returnGenre = genre;
+            }
         }
+        if (!checker) {
+            throw new ObjectNotFoundException("Not found");
+        }
+        return returnGenre;
     }
 
     @Override

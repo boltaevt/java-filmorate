@@ -90,7 +90,6 @@ public class FilmDbStorage implements FilmStorage {
         String sqlQuery = "SELECT * FROM film AS f LEFT JOIN (SELECT filmId, COUNT (userId) AS rate " +
                 "FROM likes" +
                 " GROUP BY filmId) AS l ON f.id = l.filmId ORDER BY rate DESC LIMIT ?";
-
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, count);
     }
 
@@ -115,17 +114,16 @@ public class FilmDbStorage implements FilmStorage {
 
     private void addGenre(Long filmId, Set<Genre> genres) {
         deleteGenre(filmId);
-        if (genres != null) {
-            if (!genres.isEmpty()) {
-                StringBuilder sqlQuery = new StringBuilder("INSERT INTO film_genre (filmId, genreId) VALUES ");
-                for (Genre filmGenre : new HashSet<>(genres)) {
-                    sqlQuery.append("(").append(filmId).append(", ").append(filmGenre.getId()).append("), ");
-                }
-                sqlQuery.delete(sqlQuery.length() - 2, sqlQuery.length());
-                jdbcTemplate.update(sqlQuery.toString());
+        if ((genres != null) && (!genres.isEmpty())) {
+            StringBuilder sqlQuery = new StringBuilder("INSERT INTO film_genre (filmId, genreId) VALUES ");
+            for (Genre filmGenre : new HashSet<>(genres)) {
+                sqlQuery.append("(").append(filmId).append(", ").append(filmGenre.getId()).append("), ");
             }
+            sqlQuery.delete(sqlQuery.length() - 2, sqlQuery.length());
+            jdbcTemplate.update(sqlQuery.toString());
         }
     }
+
 
     private void deleteGenre(Long filmId) {
         String sqlQuery = "DELETE FROM film_genre WHERE filmId = ?;";

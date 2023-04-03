@@ -1,7 +1,0 @@
-Okay.
-
-So now we focus on finally making friends work.
-
-First, I need to make sure that -adding a friend- works.
-
-This also means that when I get a User I must get him together with his particular friends.

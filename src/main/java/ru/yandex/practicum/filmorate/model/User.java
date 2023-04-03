@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.Email;
@@ -13,6 +14,7 @@ import java.util.*;
 @Data
 @Slf4j
 @Builder
+@NoArgsConstructor
 public class User {
 
     protected long id;

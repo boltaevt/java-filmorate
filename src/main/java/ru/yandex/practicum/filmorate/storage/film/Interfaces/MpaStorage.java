@@ -6,10 +6,9 @@ import java.util.List;
 
 public interface MpaStorage {
 
-        Mpa getById(Long id);
+    Mpa getById(Long id);
 
-        List<Mpa> getAll();
+    List<Mpa> getAll();
 
-        Mpa getFilmMpa(Long filmId);
-
+    Mpa getFilmMpa(Long filmId);
 }

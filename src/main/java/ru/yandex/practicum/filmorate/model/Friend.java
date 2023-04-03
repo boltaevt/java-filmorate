@@ -8,10 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Builder
 public class Friend {
-    long id;
-    long userId;
-    long friendId;
-    boolean friendStatus;
+    private long id;
+    private long userId;
+    private long friendId;
+    private boolean friendStatus;
 
     public Friend(long id, long userId, long friendId, boolean friendStatus) {
         this.id = id;

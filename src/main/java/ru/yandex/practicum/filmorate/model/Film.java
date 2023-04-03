@@ -5,8 +5,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class Film {
     private long id;
     private String name;
@@ -16,10 +18,6 @@ public class Film {
     private Set<Long> likes = new HashSet<>();
     private Mpa mpa;
     private Set<Genre> genres;
-
-    public Film() {
-
-    }
 
     public Film(long id, String name, String description, LocalDate releaseDate, long duration) {
         this.id = id;

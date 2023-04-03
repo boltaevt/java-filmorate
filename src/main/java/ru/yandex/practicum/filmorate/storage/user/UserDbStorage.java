@@ -18,7 +18,7 @@ import java.util.List;
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    Long userId = 1L;
+    private Long userId = 1L;
 
     @Autowired
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
@@ -67,8 +67,6 @@ public class UserDbStorage implements UserStorage {
         String sqlQuery = "SELECT id, email, login, name, birthday FROM UserTable LIMIT 100";
         return jdbcTemplate.query(sqlQuery, new UserRowMapper());
     }
-
-    //TODO: REREAD updateUserInfo method.
 
     @Override
     public User updateUserInfo(User user) {
