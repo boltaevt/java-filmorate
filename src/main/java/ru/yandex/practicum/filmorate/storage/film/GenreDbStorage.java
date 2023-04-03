@@ -22,7 +22,7 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Genre getById(Long id) {
-        List <Genre> genres = getAll();
+        List<Genre> genres = getAll();
         boolean checker = false;
         Genre returnGenre = new Genre();
         for (Genre genre : genres) {
@@ -47,8 +47,7 @@ public class GenreDbStorage implements GenreStorage {
     @Override
     public Set<Genre> getFilmGenre(Long filmId) {
 
-        String sqlQuery = "SELECT * FROM film_genre JOIN genre ON " +
-                "genre.id = film_genre.genreId WHERE film_genre.filmId = ?;";
+        String sqlQuery = "SELECT * FROM film_genre JOIN genre ON " + "genre.id = film_genre.genreId WHERE film_genre.filmId = ?;";
         Set<Genre> genreSet = new HashSet<>(jdbcTemplate.query(sqlQuery, this::mapRowToGenre, filmId));
 
         return genreSet;
