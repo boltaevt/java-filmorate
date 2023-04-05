@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.Email;
@@ -11,6 +13,8 @@ import java.util.*;
 
 @Data
 @Slf4j
+@Builder
+@NoArgsConstructor
 public class User {
 
     protected long id;
@@ -22,7 +26,7 @@ public class User {
     protected String name;
     @Past(message = "Дата рождения не может быть в будущем.")
     protected LocalDate birthday;
-    protected Set<Long> friendIds = new HashSet<>();
+    protected final Set<Long> friendIds = new HashSet<>();
 
     public User(long id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
@@ -30,6 +34,10 @@ public class User {
         this.login = login;
         this.name = name;
         this.birthday = birthday;
+    }
+
+    public Set<Long> getFriendIds() {
+        return friendIds;
     }
 
     @Override
